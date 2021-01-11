@@ -28,22 +28,26 @@
 green=32
 red=31
 divider='--------------------------------------------------------------------------------'
-export format="\n\033[${green};1m%s\n\033[${green};1m${divider}\033[0m\n"
-export format_error="\n\033[${red};1m%s\n\033[${red};1m${divider}\033[0m\n"
+strong_divider='================================================================================'
+export f_h1_ok="\n\033[${green};1m%s\n\033[${green};1m${strong_divider}\033[0m\n"
+export f_h2_ok="\n\033[${green};1m%s\n\033[${green};1m${divider}\033[0m\n"
+export f_h3_ok="\n\033[${green};1m%s\033[0m\n"
+export f_h2_err="\n\033[${red};1m%s\n\033[${red};1m${divider}\033[0m\n"
+export f_h3_err="\n\033[${red};1m%s\033[0m\n"
 
-printf "$format" "# Full namespace report"
+printf "$f_h1_ok" "# Full namespace report"
 
 # Provide a resource overview
 #
 printf "\n\n"
-printf "$format" "## Resource overview"
-printf "$format" "### \$ kubectl get deployment,statefulset,daemonset,pod"
+printf "$f_h2_ok" "## Resource overview"
+printf "$f_h3_ok" "### \$ kubectl get deployment,statefulset,daemonset,pod"
 kubectl get deploy,sts,ds,pod
-printf "$format" "### \$ kubectl get secret,configmap"
+printf "$f_h3_ok" "### \$ kubectl get secret,configmap"
 kubectl get secret,cm
-printf "$format" "### \$ kubectl get service,ingress,networkpolicy"
+printf "$f_h3_ok" "### \$ kubectl get service,ingress,networkpolicy"
 kubectl get svc,ing,netpol
-printf "$format" "### \$ kubectl get serviceaccount,role,rolebinding"
+printf "$f_h3_ok" "### \$ kubectl get serviceaccount,role,rolebinding"
 kubectl get sa,role,rolebinding
 
 
@@ -59,11 +63,11 @@ PODS_PENDING=$(
 )
 if [ -n "$PODS_PENDING" ]; then
     printf "\n\n"
-    printf "$format_error" "## Pending pods detected!"
+    printf "$f_h2_err" "## Pending pods detected!"
     echo "$PODS_PENDING" | xargs --max-args=1 echo -
 
     for var in $PODS_PENDING; do
-        printf "$format_error" "### \$ kubectl describe pod/$var"
+        printf "$f_h3_err" "### \$ kubectl describe pod/$var"
         kubectl describe pod/$var
     done
 fi
@@ -85,13 +89,13 @@ PODS_NON_READY=$(
 )
 if [ -n "$PODS_NON_READY" ]; then
     printf "\n\n"
-    printf "$format_error" "## Pods with non-ready container(s) detected!"
+    printf "$f_h2_err" "## Pods with non-ready container(s) detected!"
     echo "$PODS_NON_READY" | xargs --max-args=1 echo -
 
     for var in $PODS_NON_READY; do
-        printf "$format_error" "### \$ kubectl describe pod/$var"
+        printf "$f_h3_err" "### \$ kubectl describe pod/$var"
         kubectl describe pod/$var
-        printf "$format_error" "### \$ kubectl logs --all-containers pod/$var"
+        printf "$f_h3_err" "### \$ kubectl logs --all-containers pod/$var"
         kubectl logs --all-containers pod/$var || echo  # a newline on failure for consistency
     done
 
@@ -121,13 +125,13 @@ PODS_RESTARTED=$(
 )
 if [ -n "$PODS_RESTARTED" ]; then
     printf "\n\n"
-    printf "$format_error" "## Pods with restarted containers detected!"
+    printf "$f_h2_err" "## Pods with restarted containers detected!"
     echo "$PODS_RESTARTED" | xargs --max-args=1 echo -
 
     for var in $PODS_RESTARTED; do
-        printf "$format_error" "### \$ kubectl describe pod/$var"
+        printf "$f_h3_err" "### \$ kubectl describe pod/$var"
         kubectl describe pod/$var
-        printf "$format_error" "### \$ kubectl logs --previous --all-containers --follow --ignore-errors pod/$var"
+        printf "$f_h3_err" "### \$ kubectl logs --previous --all-containers --follow --ignore-errors pod/$var"
         kubectl logs --previous --all-containers --follow --ignore-errors pod/$var || echo  # a newline on failure for consistency
     done
 fi
@@ -137,11 +141,11 @@ fi
 #
 if [ -n "$REPORT_IMPORTANT_WORKLOADS" ]; then
     printf "\n\n"
-    printf "$format" "## Important workload's logs"
+    printf "$f_h2_ok" "## Important workload's logs"
     echo "$REPORT_IMPORTANT_WORKLOADS" | xargs --max-args=1 echo -
 
     for var in $REPORT_IMPORTANT_WORKLOADS; do
-        printf "$format" "### \$ kubectl logs --all-containers $var"
+        printf "$f_h3_ok" "### \$ kubectl logs --all-containers $var"
         kubectl logs --all-containers $var || echo  # a newline on failure for consistency
     done
 fi
