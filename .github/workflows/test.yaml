@@ -41,9 +41,7 @@ jobs:
       # Start a local k8s cluster
       # https://github.com/jupyterhub/action-k3s-helm/
       - name: Start local k8s cluster
-        # FIXME: return to jupyterhub/action-k3s-helm@v1 after merge of
-        #        https://github.com/jupyterhub/action-k3s-helm/pull/21.
-        uses: consideratio/action-k3s-helm@pr/higher-permissions
+        uses: jupyterhub/action-k3s-helm@v1
         with:
           k3s-channel: ${{ matrix.k3s-channel }}
           metrics-enabled: false
