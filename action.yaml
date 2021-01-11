@@ -9,9 +9,14 @@ branding:
   color: purple
 
 inputs:
+  # Manually keep the descriptions synced with the readme!
   namespace:
     default: ""
-    description: "Updates the kubeconfig's current context's namespace."
+    description: "Updates the kubeconfig's current context's namespace to this namespace."
+    required: false
+  important-workloads:
+    default: ""
+    description: "Always provide logs of these workloads. Use space a separator, example: `deploy/my-deployment sts/my-statefulset`."
     required: false
 
 # outputs:

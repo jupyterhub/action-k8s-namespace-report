@@ -1,4 +1,8 @@
 # Tests the local GitHub Action.
+#
+# This is a GitHub workflow defining a set of jobs with a set of steps.
+# ref: https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
+#
 ---
 name: Test
 
@@ -33,7 +37,14 @@ jobs:
       matrix:
         # k3s-channel: https://update.k3s.io/v1-release/channels
         include:
-          - k3s-channel: v1.19
+          - k3s-channel: v1.20
+            test-namespace: ""
+            test-pods: healthy pending non-ready restarted
+            test-important-workloads: pod/test-healthy-1 pod/test-healthy-2
+          - k3s-channel: v1.20
+            test-namespace: kube-system
+            test-pods: ""
+            test-important-workloads: ""
 
     steps:
       - uses: actions/checkout@v2
@@ -47,11 +58,34 @@ jobs:
           metrics-enabled: false
           traefik-enabled: false
 
+      # Prepare a set of pods with various conditions for testing of report
+      - name: Prepare restarted pod
+        if: contains(matrix.test-pods, 'restarted')
+        run: |
+          kubectl apply -f ci/restarted-pod.yaml
+      - name: Prepare non-ready pod
+        if: contains(matrix.test-pods, 'non-ready')
+        run: |
+          kubectl apply -f ci/non-ready-pod.yaml
+      - name: Prepare pending pod
+        if: contains(matrix.test-pods, 'pending')
+        run: |
+          kubectl apply -f ci/pending-pod.yaml
+      - name: Prepare healthy pod
+        if: contains(matrix.test-pods, 'healthy')
+        run: |
+          kubectl apply -f ci/healthy-pod.yaml
+      - name: Await test pods
+        if: matrix.test-pods != ''
+        run: |
+          sleep 10
+
       - name: Run local action
         uses: ./
         id: k8s-namespace-report
         with:
-          namespace: kube-system
+          namespace: ${{ matrix.test-namespace }}
+          important-workloads: ${{ matrix.test-important-workloads }}
 
       # - name: Validate local action's set outputs/envs
       #   run: |
