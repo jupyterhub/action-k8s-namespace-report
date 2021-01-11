@@ -9,13 +9,13 @@ branding:
   color: purple
 
 inputs:
-  my-input:
-    description: "..."
+  namespace:
+    default: ""
+    description: "Updates the current kubeconfig context's namespace."
     required: false
-    default: "..."
 
 # outputs:
-#   kubeconfig:
+#   my-output:
 #     description: "..."
 #     value: "..."
 
@@ -26,6 +26,13 @@ runs:
       shell: bash
       run: |
         exit 0
+
+    - name: Update current namespace
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.namespace }}" ]; then
+            kubectl config set-context --current --namespace="${{ inputs.namespace }}"
+        fi
 
     - name: Emit namespace report
       shell: bash
