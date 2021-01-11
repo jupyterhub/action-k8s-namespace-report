@@ -24,14 +24,15 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       # GitHub Action reference: https://github.com/jupyterhub/action-k3s-helm
-      - name: Start k8s locally
+      - name: Setup k8s
         uses: jupyterhub/action-k3s-helm@v1
         with:
           k3s-channel: v1.20    # https://update.k3s.io/v1-release/channels
 
       # GitHub Action reference: https://github.com/jupyterhub/action-k8s-namespace-report
-      - name: K8s namespace report
+      - name: Kubernetes namespace report
         uses: jupyterhub/action-k8s-namespace-report@v1
+        if: always()
         # with:
         #   namespace: my-namespace
         #   important-workloads: deploy/my-deployment sts/my-statefulset
