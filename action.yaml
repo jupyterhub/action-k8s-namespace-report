@@ -36,5 +36,7 @@ runs:
 
     - name: Emit namespace report
       shell: bash
+      env:
+        REPORT_IMPORTANT_WORKLOADS: ${{ inputs.important-workloads }}
       run: |
         ./k8s-namespace-report
