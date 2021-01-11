@@ -1,0 +1,10 @@
+# pre-commit is a tool to automatically do tasks before committing.
+#
+# Config reference: https://pre-commit.com/#pre-commit-configyaml---top-level
+#
+repos:
+  # Shell script code formatting
+  - repo: https://github.com/lovesegfault/beautysh
+    rev: 6.0.1
+    hooks:
+      - id: beautysh
