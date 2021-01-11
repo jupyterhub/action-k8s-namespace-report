@@ -36,3 +36,13 @@ jobs:
         #   namespace: my-namespace
         #   important-workloads: deploy/my-deployment sts/my-statefulset
 ```
+
+## Preview
+
+__Live example__
+
+You can inspect recent test runs [here](https://github.com/jupyterhub/action-k8s-namespace-report/actions?query=workflow%3ATest).
+
+__GIF Animation__
+
+![](https://user-images.githubusercontent.com/3837114/104154471-4b3f7c00-53e5-11eb-8ebf-d54c22af12ed.gif)
