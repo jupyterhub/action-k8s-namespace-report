@@ -11,7 +11,7 @@ branding:
 inputs:
   namespace:
     default: ""
-    description: "Updates the current kubeconfig context's namespace."
+    description: "Updates the kubeconfig's current context's namespace."
     required: false
 
 # outputs:
@@ -31,7 +31,7 @@ runs:
       shell: bash
       run: |
         if [ -n "${{ inputs.namespace }}" ]; then
-            kubectl config set-context --current --namespace="${{ inputs.namespace }}"
+            kubectl config set-context --current --namespace="${{ inputs.namespace }}" > /dev/null
         fi
 
     - name: Emit namespace report

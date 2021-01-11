@@ -4,10 +4,7 @@
 GitHub Action to report info and logs from the current namespace.
 
 ## Optional input parameters
-- `my-input`: ...
-
-## Outputs
-- `my-output`: ...
+- `namespace`: Updates the kubeconfig's current context's namespace.
 
 ## Example
 
