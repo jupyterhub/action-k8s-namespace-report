@@ -1,0 +1,64 @@
+# Tests the local GitHub Action.
+---
+name: Test
+
+on:
+  pull_request:
+  push:
+    branches-ignore:
+      - "v*"
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+
+      # https://github.com/pre-commit/action
+      - uses: pre-commit/action@v2.0.0
+
+  test:
+    name: Test
+    runs-on: ubuntu-20.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # k3s-channel: https://update.k3s.io/v1-release/channels
+        include:
+          - k3s-channel: v1.19
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # Start a local k8s cluster
+      # https://github.com/jupyterhub/action-k3s-helm/
+      - name: Start local k8s cluster
+        uses: jupyterhub/action-k3s-helm@v1
+        with:
+          k3s-channel: ${{ matrix.k3s-channel }}
+          metrics-enabled: false
+          traefik-enabled: false
+
+      - name: Run local action
+        uses: ./
+        id: k8s-namespace-report
+        # with:
+        #   my-input: ""
+
+      # - name: Validate local action's set outputs/envs
+      #   run: |
+      #     echo "my-output=${{ steps.k3s.outputs.my-output }}"
+      #     echo "---"
+      #     EXIT=0
+      #     if [[ -z "${{ steps.k3s.outputs.my-output }}" ]]; then
+      #         echo "my-output not set as an action output"
+      #         EXIT=1
+      #     fi
+      #     exit $EXIT
