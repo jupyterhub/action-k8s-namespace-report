@@ -50,8 +50,8 @@ jobs:
       - name: Run local action
         uses: ./
         id: k8s-namespace-report
-        # with:
-        #   my-input: ""
+        with:
+          namespace: kube-system
 
       # - name: Validate local action's set outputs/envs
       #   run: |
