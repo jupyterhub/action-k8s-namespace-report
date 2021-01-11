@@ -44,4 +44,4 @@ runs:
       env:
         REPORT_IMPORTANT_WORKLOADS: ${{ inputs.important-workloads }}
       run: |
-        ./k8s-namespace-report
+        ${{ github.action_path }}/k8s-namespace-report
