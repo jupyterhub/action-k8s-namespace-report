@@ -51,7 +51,7 @@ jobs:
 
       # Start a local k8s cluster
       # https://github.com/jupyterhub/action-k3s-helm/
-      - name: Start local k8s cluster
+      - name: Setup k8s
         uses: jupyterhub/action-k3s-helm@v1
         with:
           k3s-channel: ${{ matrix.k3s-channel }}
@@ -60,33 +60,35 @@ jobs:
 
 
       # Prepare a set of pods with various conditions for testing of report
-      - name: "Prepare: restarted test pod"
+      - name: "Prepare test pods: restarted"
         if: contains(matrix.test-pods, 'restarted')
         run: |
           kubectl apply -f ci/restarted-pod.yaml
 
-      - name: "Prepare: healthy test pod"
+      - name: "Prepare test pods: healthy"
         if: contains(matrix.test-pods, 'healthy')
         run: |
           kubectl apply -f ci/healthy-pod.yaml
 
-      - name: "Prepare: non-ready test pod"
+      - name: "Prepare test pods: non-ready"
         if: contains(matrix.test-pods, 'non-ready')
         run: |
           kubectl apply -f ci/non-ready-pod.yaml
 
-      - name: "Prepare: pending test pod"
+      - name: "Prepare test pods: pending"
         if: contains(matrix.test-pods, 'pending')
         run: |
           kubectl apply -f ci/pending-pod.yaml
 
-      - name: Await test pods
+      - name: "Prepare test pods: wait 10 seconds"
         if: matrix.test-pods != ''
         run: |
           sleep 10
 
 
-      - name: Run local action
+      # IMPORTANT: This step only only tests that the action doesn't error
+      #            unexpectedly. Please rely on manual inspection of the report.
+      - name: Kubernetes namespace report - Inspect me!
         uses: ./
         id: k8s-namespace-report
         with:
