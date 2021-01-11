@@ -33,5 +33,6 @@ jobs:
       - name: K8s namespace report
         uses: jupyterhub/action-k8s-namespace-report@v1
         # with:
-        #   namespace: my-non-default-namespace
+        #   namespace: my-namespace
+        #   important-workloads: deploy/my-deployment sts/my-statefulset
 ```
