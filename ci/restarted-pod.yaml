@@ -20,10 +20,10 @@ spec:
         - -c
         - >
             if [ -f "/tmp/mount/here" ]; then
-                printf "This is logged \nafter the container has restarted \nand is about to sleep...";
+                printf "This is logged \nafter the container has restarted \nand is about to sleep...\n";
                 sleep infinity;
             else
                 touch /tmp/mount/here;
-                printf "This is logged \njust before the container \nis about to crash!";
+                printf "This is logged \njust before the container \nis about to crash!\n";
                 exit 123;
             fi;

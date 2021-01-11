@@ -11,7 +11,7 @@ spec:
         - sh
         - -c
         - >
-            printf "This pod is ready\nfor its\neternal sleep!";
+            printf "This pod is ready\nfor its\neternal sleep!\n";
             sleep infinity;
 ---
 apiVersion: v1
@@ -26,5 +26,5 @@ spec:
         - sh
         - -c
         - >
-            printf "This pod is ready\nfor its\neternal sleep!";
+            printf "This pod is ready\nfor its\neternal sleep!\n";
             sleep infinity;

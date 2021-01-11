@@ -39,7 +39,7 @@ jobs:
         include:
           - k3s-channel: v1.20
             test-namespace: ""
-            test-pods: healthy pending non-ready restarted
+            test-pods: restarted healthy non-ready pending
             test-important-workloads: pod/test-healthy-1 pod/test-healthy-2
           - k3s-channel: v1.20
             test-namespace: kube-system
@@ -58,27 +58,33 @@ jobs:
           metrics-enabled: false
           traefik-enabled: false
 
+
       # Prepare a set of pods with various conditions for testing of report
-      - name: Prepare restarted pod
+      - name: "Prepare: restarted test pod"
         if: contains(matrix.test-pods, 'restarted')
         run: |
           kubectl apply -f ci/restarted-pod.yaml
-      - name: Prepare non-ready pod
-        if: contains(matrix.test-pods, 'non-ready')
-        run: |
-          kubectl apply -f ci/non-ready-pod.yaml
-      - name: Prepare pending pod
-        if: contains(matrix.test-pods, 'pending')
-        run: |
-          kubectl apply -f ci/pending-pod.yaml
-      - name: Prepare healthy pod
+
+      - name: "Prepare: healthy test pod"
         if: contains(matrix.test-pods, 'healthy')
         run: |
           kubectl apply -f ci/healthy-pod.yaml
+
+      - name: "Prepare: non-ready test pod"
+        if: contains(matrix.test-pods, 'non-ready')
+        run: |
+          kubectl apply -f ci/non-ready-pod.yaml
+
+      - name: "Prepare: pending test pod"
+        if: contains(matrix.test-pods, 'pending')
+        run: |
+          kubectl apply -f ci/pending-pod.yaml
+
       - name: Await test pods
         if: matrix.test-pods != ''
         run: |
           sleep 10
+
 
       - name: Run local action
         uses: ./
@@ -86,6 +92,7 @@ jobs:
         with:
           namespace: ${{ matrix.test-namespace }}
           important-workloads: ${{ matrix.test-important-workloads }}
+
 
       # - name: Validate local action's set outputs/envs
       #   run: |

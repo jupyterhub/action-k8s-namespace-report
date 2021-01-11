@@ -35,6 +35,7 @@ printf "$format" "# Full namespace report"
 
 # Provide a resource overview
 #
+printf "\n\n"
 printf "$format" "## Resource overview"
 printf "$format" "### \$ kubectl get deployment,statefulset,daemonset,pod"
 kubectl get deploy,sts,ds,pod
@@ -57,6 +58,7 @@ PODS_PENDING=$(
     '
 )
 if [ -n "$PODS_PENDING" ]; then
+    printf "\n\n"
     printf "$format_error" "## Pending pods detected!"
     echo "$PODS_PENDING" | xargs --max-args=1 echo -
 
@@ -82,6 +84,7 @@ PODS_NON_READY=$(
     '
 )
 if [ -n "$PODS_NON_READY" ]; then
+    printf "\n\n"
     printf "$format_error" "## Pods with non-ready container(s) detected!"
     echo "$PODS_NON_READY" | xargs --max-args=1 echo -
 
@@ -89,7 +92,7 @@ if [ -n "$PODS_NON_READY" ]; then
         printf "$format_error" "### \$ kubectl describe pod/$var"
         kubectl describe pod/$var
         printf "$format_error" "### \$ kubectl logs --all-containers pod/$var"
-        kubectl logs --all-containers pod/$var || echo  # a newline on failure for consistency with non-failure
+        kubectl logs --all-containers pod/$var || echo  # a newline on failure for consistency
     done
 
 fi
@@ -117,6 +120,7 @@ PODS_RESTARTED=$(
     '
 )
 if [ -n "$PODS_RESTARTED" ]; then
+    printf "\n\n"
     printf "$format_error" "## Pods with restarted containers detected!"
     echo "$PODS_RESTARTED" | xargs --max-args=1 echo -
 
@@ -124,7 +128,7 @@ if [ -n "$PODS_RESTARTED" ]; then
         printf "$format_error" "### \$ kubectl describe pod/$var"
         kubectl describe pod/$var
         printf "$format_error" "### \$ kubectl logs --previous --all-containers --follow --ignore-errors pod/$var"
-        kubectl logs --previous --all-containers --follow --ignore-errors pod/$var
+        kubectl logs --previous --all-containers --follow --ignore-errors pod/$var || echo  # a newline on failure for consistency
     done
 fi
 
@@ -132,11 +136,12 @@ fi
 # Show container logs of all important workloads
 #
 if [ -n "$REPORT_IMPORTANT_WORKLOADS" ]; then
+    printf "\n\n"
     printf "$format" "## Important workload's logs"
     echo "$REPORT_IMPORTANT_WORKLOADS" | xargs --max-args=1 echo -
 
-    for var in "$REPORT_IMPORTANT_WORKLOADS"; do
+    for var in $REPORT_IMPORTANT_WORKLOADS; do
         printf "$format" "### \$ kubectl logs --all-containers $var"
-        kubectl logs --all-containers $var || echo  # a newline on failure for consistency with non-failure
+        kubectl logs --all-containers $var || echo  # a newline on failure for consistency
     done
 fi
