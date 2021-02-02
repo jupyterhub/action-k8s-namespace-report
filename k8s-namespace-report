@@ -35,6 +35,11 @@ export f_h3_ok="\n\033[${green};1m%s\033[0m\n"
 export f_h2_err="\n\033[${red};1m%s\n\033[${red};1m${divider}\033[0m\n"
 export f_h3_err="\n\033[${red};1m%s\033[0m\n"
 
+# We compactify the passing of --namespace, and by using --namespace= we can
+# ensure even a blank string will result in the correct behavior without
+# erroring, which is to use the current contexts namespace.
+export ns=--namespace=${NAMESPACE}
+
 printf "$f_h1_ok" "# Full namespace report"
 
 # Provide a resource overview
@@ -42,13 +47,13 @@ printf "$f_h1_ok" "# Full namespace report"
 printf "\n\n"
 printf "$f_h2_ok" "## Resource overview"
 printf "$f_h3_ok" "### \$ kubectl get deployment,statefulset,daemonset,pod"
-kubectl get deploy,sts,ds,pod
+kubectl get deploy,sts,ds,pod ${ns}
 printf "$f_h3_ok" "### \$ kubectl get secret,configmap"
-kubectl get secret,cm
+kubectl get secret,cm ${ns}
 printf "$f_h3_ok" "### \$ kubectl get service,ingress,networkpolicy"
-kubectl get svc,ing,netpol
+kubectl get svc,ing,netpol ${ns}
 printf "$f_h3_ok" "### \$ kubectl get serviceaccount,role,rolebinding"
-kubectl get sa,role,rolebinding
+kubectl get sa,role,rolebinding ${ns}
 
 
 # Check if any container of any pod has a restartCount > 0. Then, we inspect
@@ -61,7 +66,7 @@ kubectl get sa,role,rolebinding
 #       ref: https://github.com/kubernetes/kubernetes/issues/97530
 #
 PODS_RESTARTED=$(
-    kubectl get pods -o json \
+    kubectl get pods -o json ${ns} \
         | jq -r '
             .items[]
             | select(
@@ -79,9 +84,9 @@ if [ -n "$PODS_RESTARTED" ]; then
 
     for var in $PODS_RESTARTED; do
         printf "$f_h3_err" "### \$ kubectl describe pod/$var"
-        kubectl describe pod/$var
+        kubectl describe pod/$var ${ns}
         printf "$f_h3_err" "### \$ kubectl logs --previous --all-containers --follow --ignore-errors pod/$var"
-        kubectl logs --previous --all-containers --follow --ignore-errors pod/$var || echo  # a newline on failure for consistency
+        kubectl logs --previous --all-containers --follow --ignore-errors pod/$var ${ns} || echo  # a newline on failure for consistency
     done
 fi
 
@@ -89,7 +94,7 @@ fi
 # Check if any pods are pending
 #
 PODS_PENDING=$(
-    kubectl get pods -o json \
+    kubectl get pods -o json ${ns} \
         | jq -r '
             .items[]
             | select(.status.phase == "Pending")
@@ -103,7 +108,7 @@ if [ -n "$PODS_PENDING" ]; then
 
     for var in $PODS_PENDING; do
         printf "$f_h3_err" "### \$ kubectl describe pod/$var"
-        kubectl describe pod/$var
+        kubectl describe pod/$var ${ns}
     done
 fi
 
@@ -111,7 +116,7 @@ fi
 # Check if any pod has a container with a non-ready status
 #
 PODS_NON_READY=$(
-    kubectl get pods -o json \
+    kubectl get pods -o json ${ns} \
         | jq -r '
             .items[]
             | select(
@@ -129,9 +134,9 @@ if [ -n "$PODS_NON_READY" ]; then
 
     for var in $PODS_NON_READY; do
         printf "$f_h3_err" "### \$ kubectl describe pod/$var"
-        kubectl describe pod/$var
+        kubectl describe pod/$var ${ns}
         printf "$f_h3_err" "### \$ kubectl logs --all-containers pod/$var"
-        kubectl logs --all-containers pod/$var || echo  # a newline on failure for consistency
+        kubectl logs --all-containers pod/$var ${ns} || echo  # a newline on failure for consistency
     done
 
 fi
@@ -146,6 +151,6 @@ if [ -n "$REPORT_IMPORTANT_WORKLOADS" ]; then
 
     for var in $REPORT_IMPORTANT_WORKLOADS; do
         printf "$f_h3_ok" "### \$ kubectl logs --all-containers $var"
-        kubectl logs --all-containers $var || echo  # a newline on failure for consistency
+        kubectl logs --all-containers $var ${ns} || echo  # a newline on failure for consistency
     done
 fi
