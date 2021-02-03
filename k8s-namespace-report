@@ -51,6 +51,41 @@ printf "$f_h3_ok" "### \$ kubectl get serviceaccount,role,rolebinding"
 kubectl get sa,role,rolebinding
 
 
+# Check if any container of any pod has a restartCount > 0. Then, we inspect
+# their logs with --previous.
+#
+# NOTE: We also add --follow and --ignore-errors in order to ensure we get the
+#       information from all containers, and combined with --previous it will
+#       exit and not get stuck.
+#
+#       ref: https://github.com/kubernetes/kubernetes/issues/97530
+#
+PODS_RESTARTED=$(
+    kubectl get pods -o json \
+        | jq -r '
+            .items[]
+            | select(
+                any(.status.initContainerStatuses[]?; .restartCount > 0)
+                or
+                any(.status.containerStatuses[]?; .restartCount > 0)
+            )
+            | .metadata.name
+    '
+)
+if [ -n "$PODS_RESTARTED" ]; then
+    printf "\n\n"
+    printf "$f_h2_err" "## Pods with restarted containers detected!"
+    echo "$PODS_RESTARTED" | xargs --max-args=1 echo -
+
+    for var in $PODS_RESTARTED; do
+        printf "$f_h3_err" "### \$ kubectl describe pod/$var"
+        kubectl describe pod/$var
+        printf "$f_h3_err" "### \$ kubectl logs --previous --all-containers --follow --ignore-errors pod/$var"
+        kubectl logs --previous --all-containers --follow --ignore-errors pod/$var || echo  # a newline on failure for consistency
+    done
+fi
+
+
 # Check if any pods are pending
 #
 PODS_PENDING=$(
@@ -99,41 +134,6 @@ if [ -n "$PODS_NON_READY" ]; then
         kubectl logs --all-containers pod/$var || echo  # a newline on failure for consistency
     done
 
-fi
-
-
-# Check if any container of any pod has a restartCount > 0. Then, we inspect
-# their logs with --previous.
-#
-# NOTE: We also add --follow and --ignore-errors in order to ensure we get the
-#       information from all containers, and combined with --previous it will
-#       exit and not get stuck.
-#
-#       ref: https://github.com/kubernetes/kubernetes/issues/97530
-#
-PODS_RESTARTED=$(
-    kubectl get pods -o json \
-        | jq -r '
-            .items[]
-            | select(
-                any(.status.initContainerStatuses[]?; .restartCount > 0)
-                or
-                any(.status.containerStatuses[]?; .restartCount > 0)
-            )
-            | .metadata.name
-    '
-)
-if [ -n "$PODS_RESTARTED" ]; then
-    printf "\n\n"
-    printf "$f_h2_err" "## Pods with restarted containers detected!"
-    echo "$PODS_RESTARTED" | xargs --max-args=1 echo -
-
-    for var in $PODS_RESTARTED; do
-        printf "$f_h3_err" "### \$ kubectl describe pod/$var"
-        kubectl describe pod/$var
-        printf "$f_h3_err" "### \$ kubectl logs --previous --all-containers --follow --ignore-errors pod/$var"
-        kubectl logs --previous --all-containers --follow --ignore-errors pod/$var || echo  # a newline on failure for consistency
-    done
 fi
 
 
