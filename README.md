@@ -4,8 +4,8 @@
 GitHub Action to report info and logs from the current namespace.
 
 ## Optional input parameters
-- `namespace`: Updates the kubeconfig's current context's namespace to this
-  namespace.
+- `namespace`: Emit a report for another namespace than the kubeconfig's current
+  context.
 - `important-workloads`: Always provide logs of these workloads. Use space a
   separator, example: `deploy/my-deployment sts/my-statefulset`.
 

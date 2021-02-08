@@ -12,7 +12,7 @@ inputs:
   # Manually keep the descriptions synced with the readme!
   namespace:
     default: ""
-    description: "Updates the kubeconfig's current context's namespace to this namespace."
+    description: "Emit a report for another namespace than the kubeconfig's current context."
     required: false
   important-workloads:
     default: ""
@@ -32,16 +32,10 @@ runs:
       run: |
         exit 0
 
-    - name: Update current namespace
-      shell: bash
-      run: |
-        if [ -n "${{ inputs.namespace }}" ]; then
-            sudo --preserve-env kubectl config set-context --current --namespace="${{ inputs.namespace }}" > /dev/null
-        fi
-
     - name: Emit namespace report
       shell: bash
       env:
         REPORT_IMPORTANT_WORKLOADS: ${{ inputs.important-workloads }}
+        NAMESPACE: ${{ inputs.namespace }}
       run: |
         ${{ github.action_path }}/k8s-namespace-report
