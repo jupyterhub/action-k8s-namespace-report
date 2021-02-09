@@ -40,6 +40,7 @@ jobs:
           - k3s-channel: v1.20
             test-pods: restarted healthy non-ready pending
             input-namespace: ""
+            input-pod-selector: pod-number notin (2,3)
             input-important-workloads: pod/test-healthy-1 pod/test-healthy-2
           - k3s-channel: v1.20
             test-pods: ""
@@ -93,6 +94,7 @@ jobs:
         id: k8s-namespace-report
         with:
           namespace: ${{ matrix.input-namespace }}
+          pod-selector: ${{ matrix.input-pod-selector }}
           important-workloads: ${{ matrix.input-important-workloads }}
 
 
