@@ -38,13 +38,13 @@ jobs:
         # k3s-channel: https://update.k3s.io/v1-release/channels
         include:
           - k3s-channel: v1.20
-            test-namespace: ""
             test-pods: restarted healthy non-ready pending
-            test-important-workloads: pod/test-healthy-1 pod/test-healthy-2
+            input-namespace: ""
+            input-important-workloads: pod/test-healthy-1 pod/test-healthy-2
           - k3s-channel: v1.20
-            test-namespace: kube-system
             test-pods: ""
-            test-important-workloads: ""
+            input-namespace: kube-system
+            input-important-workloads: ""
 
     steps:
       - uses: actions/checkout@v2
@@ -92,8 +92,8 @@ jobs:
         uses: ./
         id: k8s-namespace-report
         with:
-          namespace: ${{ matrix.test-namespace }}
-          important-workloads: ${{ matrix.test-important-workloads }}
+          namespace: ${{ matrix.input-namespace }}
+          important-workloads: ${{ matrix.input-important-workloads }}
 
 
       # - name: Validate local action's set outputs/envs
