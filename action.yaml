@@ -14,6 +14,10 @@ inputs:
     default: ""
     description: "Emit a report for another namespace than the kubeconfig's current context."
     required: false
+  pod-selector:
+    default: ""
+    description: "Limit pod reporting to pods with certain labels, example: `app.kubernetes.io/component notin (logger,metrics)`."
+    required: false
   important-workloads:
     default: ""
     description: "Always provide logs of these workloads. Use space a separator, example: `deploy/my-deployment sts/my-statefulset`."
@@ -37,5 +41,6 @@ runs:
       env:
         REPORT_IMPORTANT_WORKLOADS: ${{ inputs.important-workloads }}
         NAMESPACE: ${{ inputs.namespace }}
+        POD_SELECTOR: ${{ inputs.pod-selector }}
       run: |
         ${{ github.action_path }}/k8s-namespace-report
