@@ -6,6 +6,8 @@ GitHub Action to report info and logs from the current namespace.
 ## Optional input parameters
 - `namespace`: Emit a report for another namespace than the kubeconfig's current
   context.
+- `pod-selector`: Limit pod reporting to pods with certain labels, example:
+  `app.kubernetes.io/component notin (secret-server,boring-server)`.
 - `important-workloads`: Always provide logs of these workloads. Use space a
   separator, example: `deploy/my-deployment sts/my-statefulset`.
 
@@ -35,6 +37,7 @@ jobs:
         if: always()
         # with:
         #   namespace: my-namespace
+        #   pod-selector: app.kubernetes.io/component notin (secret-server,boring-server)
         #   important-workloads: deploy/my-deployment sts/my-statefulset
 ```
 

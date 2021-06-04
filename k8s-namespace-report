@@ -38,7 +38,8 @@ export f_h3_err="\n\033[${red};1m%s\033[0m\n"
 # We compactify the passing of --namespace, and by using --namespace= we can
 # ensure even a blank string will result in the correct behavior without
 # erroring, which is to use the current contexts namespace.
-export ns=--namespace=${NAMESPACE}
+export ns="--namespace=${NAMESPACE}"
+export psel="--selector=${POD_SELECTOR}"
 
 printf "$f_h1_ok" "# Full namespace report"
 
@@ -46,8 +47,10 @@ printf "$f_h1_ok" "# Full namespace report"
 #
 printf "\n\n"
 printf "$f_h2_ok" "## Resource overview"
-printf "$f_h3_ok" "### \$ kubectl get deployment,statefulset,daemonset,pod"
-kubectl get deploy,sts,ds,pod ${ns}
+printf "$f_h3_ok" "### \$ kubectl get deployment,statefulset,daemonset"
+kubectl get deploy,sts,ds ${ns}
+printf "$f_h3_ok" "### \$ kubectl get pod"
+kubectl get pod ${ns} "${psel}"
 printf "$f_h3_ok" "### \$ kubectl get secret,configmap"
 kubectl get secret,cm ${ns}
 printf "$f_h3_ok" "### \$ kubectl get service,ingress,networkpolicy"
@@ -66,7 +69,7 @@ kubectl get sa,role,rolebinding ${ns}
 #       ref: https://github.com/kubernetes/kubernetes/issues/97530
 #
 PODS_RESTARTED=$(
-    kubectl get pods -o json ${ns} \
+    kubectl get pods -o json ${ns} "${psel}" \
         | jq -r '
             .items[]
             | select(
@@ -94,7 +97,7 @@ fi
 # Check if any pods are pending
 #
 PODS_PENDING=$(
-    kubectl get pods -o json ${ns} \
+    kubectl get pods -o json ${ns} "${psel}" \
         | jq -r '
             .items[]
             | select(.status.phase == "Pending")
@@ -116,7 +119,7 @@ fi
 # Check if any pod has a container with a non-ready status
 #
 PODS_NON_READY=$(
-    kubectl get pods -o json ${ns} \
+    kubectl get pods -o json ${ns} "${psel}" \
         | jq -r '
             .items[]
             | select(

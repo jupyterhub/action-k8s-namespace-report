@@ -1,18 +1,19 @@
 # Reference: https://docs.github.com/en/free-pro-team@latest/actions/creating-actions/metadata-syntax-for-github-actions
 ---
 name: Kubernetes namespace report
+# Manually keep the action, input, and output descriptions in sync with the
+# readme!
 description: |
-  Emits a report of the current k8s cluster and the current namespace.
-
-branding:
-  icon: server
-  color: purple
+  GitHub Action to report info and logs from the current namespace.
 
 inputs:
-  # Manually keep the descriptions synced with the readme!
   namespace:
     default: ""
     description: "Emit a report for another namespace than the kubeconfig's current context."
+    required: false
+  pod-selector:
+    default: ""
+    description: "Limit pod reporting to pods with certain labels, example: `app.kubernetes.io/component notin (secret-server,boring-server)`. "
     required: false
   important-workloads:
     default: ""
@@ -23,6 +24,10 @@ inputs:
 #   my-output:
 #     description: "..."
 #     value: "..."
+
+branding:
+  icon: server
+  color: purple
 
 runs:
   using: "composite"
@@ -37,5 +42,6 @@ runs:
       env:
         REPORT_IMPORTANT_WORKLOADS: ${{ inputs.important-workloads }}
         NAMESPACE: ${{ inputs.namespace }}
+        POD_SELECTOR: ${{ inputs.pod-selector }}
       run: |
         ${{ github.action_path }}/k8s-namespace-report
