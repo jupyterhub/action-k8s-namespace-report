@@ -57,6 +57,8 @@ printf "$f_h3_ok" "### \$ kubectl get service,ingress,networkpolicy"
 kubectl get svc,ing,netpol ${ns}
 printf "$f_h3_ok" "### \$ kubectl get serviceaccount,role,rolebinding"
 kubectl get sa,role,rolebinding ${ns}
+printf "$f_h3_ok" "### \$ kubectl get pv,pvc"
+kubectl get pv,pvc ${ns}
 
 
 # Check if any container of any pod has a restartCount > 0. Then, we inspect
