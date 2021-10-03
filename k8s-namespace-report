@@ -47,8 +47,8 @@ printf "$f_h1_ok" "# Full namespace report"
 #
 printf "\n\n"
 printf "$f_h2_ok" "## Resource overview"
-printf "$f_h3_ok" "### \$ kubectl get deployment,statefulset,daemonset"
-kubectl get deploy,sts,ds ${ns}
+printf "$f_h3_ok" "### \$ kubectl get deployment,statefulset,daemonset,cronjob,job"
+kubectl get deploy,sts,ds,cronjob,job ${ns}
 printf "$f_h3_ok" "### \$ kubectl get pod"
 kubectl get pod ${ns} "${psel}"
 printf "$f_h3_ok" "### \$ kubectl get secret,configmap"
