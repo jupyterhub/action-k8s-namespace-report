@@ -1,5 +1,5 @@
 # GitHub Action: Emit a k8s namespace report
-[![GitHub Action badge](https://github.com/jupyterhub/action-k8s-namespace-report/workflows/Test/badge.svg)](https://github.com/jupyterhub/action-k8s-namespace-report/actions)
+[![GitHub Action badge](https://github.com/jupyterhub/action-k8s-namespace-report/workflows/test/badge.svg)](https://github.com/jupyterhub/action-k8s-namespace-report/actions)
 
 GitHub Action to report info and logs from the current namespace.
 

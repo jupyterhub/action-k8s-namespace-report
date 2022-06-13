@@ -2,7 +2,7 @@
 #
 # Notes:
 # - Status and logs from dependabot are provided at
-#   https://github.com/jupyterhub/action-k3s-helm/network/updates.
+#   https://github.com/jupyterhub/action-k8s-namespace-report/network/updates.
 #
 version: 2
 updates:
