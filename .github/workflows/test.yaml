@@ -1,7 +1,7 @@
 # Tests the local GitHub Action.
 #
 # This is a GitHub workflow defining a set of jobs with a set of steps.
-# ref: https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
+# ref: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
 #
 ---
 name: Test
@@ -10,26 +10,13 @@ on:
   pull_request:
   push:
     branches-ignore:
-      - "v*"
+      - "dependabot/**"
+      - "pre-commit-ci-update-config"
+    tags: ["**"]
   workflow_dispatch:
 
-defaults:
-  run:
-    shell: bash
-
 jobs:
-  lint:
-    name: Lint
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-
-      # https://github.com/pre-commit/action
-      - uses: pre-commit/action@v2.0.0
-
   test:
-    name: Test
     runs-on: ubuntu-20.04
 
     strategy:
@@ -37,23 +24,23 @@ jobs:
       matrix:
         # k3s-channel: https://update.k3s.io/v1-release/channels
         include:
-          - k3s-channel: v1.20
+          - k3s-channel: latest
             test-pods: restarted healthy non-ready pending
             input-namespace: ""
             input-pod-selector: pod-number notin (2,3)
             input-important-workloads: pod/test-healthy-1 pod/test-healthy-2
-          - k3s-channel: v1.20
+          - k3s-channel: stable
             test-pods: ""
             input-namespace: kube-system
             input-important-workloads: ""
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       # Start a local k8s cluster
       # https://github.com/jupyterhub/action-k3s-helm/
       - name: Setup k8s
-        uses: jupyterhub/action-k3s-helm@v1
+        uses: jupyterhub/action-k3s-helm@v2
         with:
           k3s-channel: ${{ matrix.k3s-channel }}
           metrics-enabled: false
