@@ -15,6 +15,6 @@ jobs:
       contents: write
     steps:
       # Action reference: https://github.com/Actions-R-Us/actions-tagger
-      - uses: Actions-R-Us/actions-tagger@95c51c646e75db5c6b7d447e3087bcee58677341
+      - uses: Actions-R-Us/actions-tagger@f411bd910a5ad370d4511517e3eac7ff887c90ea
         with:
           token: "${{ github.token }}"
