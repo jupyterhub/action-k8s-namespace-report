@@ -88,10 +88,12 @@ if [ -n "$PODS_RESTARTED" ]; then
     echo "$PODS_RESTARTED" | xargs --max-args=1 echo -
 
     for var in $PODS_RESTARTED; do
+        echo "::group::pod/$var"
         printf "$f_h3_err" "### \$ kubectl describe pod/$var"
         kubectl describe pod/$var ${ns}
         printf "$f_h3_err" "### \$ kubectl logs --previous --all-containers --follow --ignore-errors pod/$var"
-        kubectl logs --previous --all-containers --follow --ignore-errors pod/$var ${ns} || echo  # a newline on failure for consistency
+        kubectl logs --previous --all-containers --follow --ignore-errors pod/$var ${ns}
+        echo "::endgroup::"
     done
 fi
 
@@ -112,8 +114,10 @@ if [ -n "$PODS_PENDING" ]; then
     echo "$PODS_PENDING" | xargs --max-args=1 echo -
 
     for var in $PODS_PENDING; do
+        echo "::group::pod/$var"
         printf "$f_h3_err" "### \$ kubectl describe pod/$var"
         kubectl describe pod/$var ${ns}
+        echo "::endgroup::"
     done
 fi
 
@@ -138,10 +142,12 @@ if [ -n "$PODS_NON_READY" ]; then
     echo "$PODS_NON_READY" | xargs --max-args=1 echo -
 
     for var in $PODS_NON_READY; do
+        echo "::group::pod/$var"
         printf "$f_h3_err" "### \$ kubectl describe pod/$var"
         kubectl describe pod/$var ${ns}
         printf "$f_h3_err" "### \$ kubectl logs --all-containers pod/$var"
-        kubectl logs --all-containers pod/$var ${ns} || echo  # a newline on failure for consistency
+        kubectl logs --all-containers pod/$var ${ns}
+        echo "::endgroup::"
     done
 
 fi
@@ -155,7 +161,9 @@ if [ -n "$REPORT_IMPORTANT_WORKLOADS" ]; then
     echo "$REPORT_IMPORTANT_WORKLOADS" | xargs --max-args=1 echo -
 
     for var in $REPORT_IMPORTANT_WORKLOADS; do
+        echo "::group::$var"
         printf "$f_h3_ok" "### \$ kubectl logs --all-containers $var"
-        kubectl logs --all-containers $var ${ns} || echo  # a newline on failure for consistency
+        kubectl logs --all-containers $var ${ns}
+        echo "::endgroup::"
     done
 fi
