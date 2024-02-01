@@ -1,7 +1,6 @@
 # Automatically updates "vX" branches based on GitHub releases. To cut a new
 # release, use the GitHub UI where you enter a tag name and release name of
 # "vX.Y.Z". See https://github.com/jupyterhub/action-k8s-namespace-report/releases.
----
 name: Release updates
 
 on:
@@ -15,6 +14,4 @@ jobs:
       contents: write
     steps:
       # Action reference: https://github.com/Actions-R-Us/actions-tagger
-      - uses: Actions-R-Us/actions-tagger@330ddfac760021349fef7ff62b372f2f691c20fb
-        with:
-          token: "${{ github.token }}"
+      - uses: Actions-R-Us/actions-tagger@v2

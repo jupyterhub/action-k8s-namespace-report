@@ -1,9 +1,11 @@
 # GitHub Action: Emit a k8s namespace report
+
 [![GitHub Action badge](https://github.com/jupyterhub/action-k8s-namespace-report/workflows/test/badge.svg)](https://github.com/jupyterhub/action-k8s-namespace-report/actions)
 
 GitHub Action to report info and logs from the current namespace.
 
 ## Optional input parameters
+
 - `namespace`: Emit a report for another namespace than the kubeconfig's current
   context.
 - `pod-selector`: Limit pod reporting to pods with certain labels, example:
@@ -23,13 +25,13 @@ on:
 
 jobs:
   k8s-test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       # GitHub Action reference: https://github.com/jupyterhub/action-k3s-helm
       - name: Setup k8s
-        uses: jupyterhub/action-k3s-helm@v1
+        uses: jupyterhub/action-k3s-helm@v4
         with:
-          k3s-channel: v1.20    # https://update.k3s.io/v1-release/channels
+          k3s-channel: stable    # https://update.k3s.io/v1-release/channels
 
       # GitHub Action reference: https://github.com/jupyterhub/action-k8s-namespace-report
       - name: Kubernetes namespace report
