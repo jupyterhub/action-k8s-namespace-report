@@ -34,7 +34,7 @@ jobs:
             input-important-workloads: ""
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # Start a local k8s cluster
       # https://github.com/jupyterhub/action-k3s-helm/
