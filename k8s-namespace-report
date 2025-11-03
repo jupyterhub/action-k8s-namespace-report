@@ -72,7 +72,7 @@ kubectl get pv,pvc ${ns}
 #
 PODS_RESTARTED=$(
     kubectl get pods -o json ${ns} "${psel}" \
-        | jq -r '
+    | jq -r '
             .items[]
             | select(
                 any(.status.initContainerStatuses[]?; .restartCount > 0)
@@ -81,7 +81,7 @@ PODS_RESTARTED=$(
             )
             | .metadata.name
     '
-)
+    )
 if [ -n "$PODS_RESTARTED" ]; then
     printf "\n\n"
     printf "$f_h2_err" "## Pods with restarted containers detected!"
@@ -102,12 +102,12 @@ fi
 #
 PODS_PENDING=$(
     kubectl get pods -o json ${ns} "${psel}" \
-        | jq -r '
+    | jq -r '
             .items[]
             | select(.status.phase == "Pending")
             | .metadata.name
     '
-)
+    )
 if [ -n "$PODS_PENDING" ]; then
     printf "\n\n"
     printf "$f_h2_err" "## Pending pods detected!"
@@ -126,7 +126,7 @@ fi
 #
 PODS_NON_READY=$(
     kubectl get pods -o json ${ns} "${psel}" \
-        | jq -r '
+    | jq -r '
             .items[]
             | select(
                 any(.status.initContainerStatuses[]?; .ready == false)
@@ -135,7 +135,7 @@ PODS_NON_READY=$(
             )
             | .metadata.name
     '
-)
+    )
 if [ -n "$PODS_NON_READY" ]; then
     printf "\n\n"
     printf "$f_h2_err" "## Pods with non-ready container(s) detected!"
