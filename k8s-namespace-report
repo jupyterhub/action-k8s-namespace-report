@@ -81,7 +81,7 @@ PODS_RESTARTED=$(
             )
             | .metadata.name
     '
-    )
+)
 if [ -n "$PODS_RESTARTED" ]; then
     printf "\n\n"
     printf "$f_h2_err" "## Pods with restarted containers detected!"
@@ -107,7 +107,7 @@ PODS_PENDING=$(
             | select(.status.phase == "Pending")
             | .metadata.name
     '
-    )
+)
 if [ -n "$PODS_PENDING" ]; then
     printf "\n\n"
     printf "$f_h2_err" "## Pending pods detected!"
@@ -135,7 +135,7 @@ PODS_NON_READY=$(
             )
             | .metadata.name
     '
-    )
+)
 if [ -n "$PODS_NON_READY" ]; then
     printf "\n\n"
     printf "$f_h2_err" "## Pods with non-ready container(s) detected!"
